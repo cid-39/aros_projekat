@@ -54,38 +54,44 @@ bool destroy_memory_block(char *filename){
 	
 int main(void){
 
-char *block = attach_memory_block(FILENAME, BLOCK_SIZE);
+	char *block = attach_memory_block(FILENAME, BLOCK_SIZE);
 
 	if(block == NULL){
 		printf("Error! Unable to get shm block!");
 		return -1;
 	}
 	
-	sem_unlink(SEM_CONSUMER_NAME);
-	sem_unlink(SEM_PRODUCER_NAME);
-	
-
-	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, O_CREAT, 0660, 0);
-	
-	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, O_CREAT, 0660, 1);
+	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, 0);
+	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, 1);
 	
     FILE *file_ptr = fopen("Kopija", "wb");
-    unsigned char byte;
-    long int size_of_file;
+    unsigned char bytes[BLOCK_SIZE];
+    long int blocks_num;
+	int size_of_remainder;
 
-    // recieving size of file
+    // recieving amount of blocks
     sem_wait(sem_prod);
-    memcpy(&size_of_file,block,sizeof(long int));
+    memcpy(&blocks_num,block,sizeof(long int));
+	sem_post(sem_cons);
+	// recieving size of remainder
+	sem_wait(sem_prod);
+    memcpy(&size_of_remainder,block,sizeof(int));
 	sem_post(sem_cons);
 
-    // recieving file
-	for (int i = 0; i < size_of_file; i++) {
+    // recieving file blocks
+	for (int i = 0; i < blocks_num; i++) {
 		sem_wait(sem_prod);
-        memcpy(&byte,block,1);
-        // printf("Citanje %x iz bloka\n", byte);
-        fwrite(&byte,1,1,file_ptr);
+        memcpy(bytes,block,BLOCK_SIZE);
+        fwrite(bytes,1,BLOCK_SIZE,file_ptr);
 		sem_post(sem_cons);
 	}
+
+	//recieving file remainder
+	sem_wait(sem_prod);
+    memcpy(bytes,block,size_of_remainder);
+    fwrite(bytes,1,size_of_remainder,file_ptr);
+	sem_post(sem_cons);
+	
 	sem_close(sem_cons);
 	sem_close(sem_prod);
 	detach_memory_block(block);
