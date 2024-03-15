@@ -10,7 +10,6 @@
 
 #define BLOCK_SIZE 4096
 #define IPC_RESULT_ERROR (-1)
-#define FILENAME "Server.c"
 
 #define SEM_PRODUCER_NAME "/myproducer"
 #define SEM_CONSUMER_NAME "/myconsumer"
@@ -52,17 +51,21 @@ bool destroy_memory_block(char *filename){
 	return (shmctl(shared_block_id, IPC_RMID, NULL) != IPC_RESULT_ERROR);
 	}
 	
-int main(void){
-
-	char *block = attach_memory_block(FILENAME, BLOCK_SIZE);
+int main(int argc, char *argv[]){
+	char str[20]="/proc/";
+	strcat(str,argv[1]);
+	char *block = attach_memory_block(str, BLOCK_SIZE);
 
 	if(block == NULL){
 		printf("Error! Unable to get shm block!");
 		return -1;
 	}
+
+	sem_unlink(SEM_CONSUMER_NAME);
+	sem_unlink(SEM_PRODUCER_NAME);
 	
-	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, 0);
-	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, 1);
+	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, O_CREAT, 0660, 0);
+	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, O_CREAT, 0660, 1);
 	
     FILE *file_ptr = fopen("Kopija", "wb");
     unsigned char bytes[BLOCK_SIZE];
