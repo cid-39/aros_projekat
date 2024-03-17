@@ -61,8 +61,8 @@ int main(int argc, char *argv[]){
 		return -1;
 	}
 
-	sem_unlink(SEM_CONSUMER_NAME);
-	sem_unlink(SEM_PRODUCER_NAME);
+	//sem_unlink(SEM_CONSUMER_NAME);
+	//sem_unlink(SEM_PRODUCER_NAME);
 	
 	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, O_CREAT, 0660, 0);
 	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, O_CREAT, 0660, 1);

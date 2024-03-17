@@ -69,9 +69,8 @@ int main(int argc, char *argv[]){
 	}
 	
 
-	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, 0);
-	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, 1);
-
+	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, O_CREAT, 0660, 0);
+	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, O_CREAT, 0660, 1);
 
     FILE *file_ptr;
     file_ptr = fopen(argv[2], "rb");
