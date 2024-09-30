@@ -1,6 +1,7 @@
 Projekat na predmetu "Arhitekturi racunara i operativnih sistema"
 
-Tema projekta:
+Tema projekta: Program za deljenje fajlova izmedju procesa implementiran u programskom jeziku C upotrebom deljenje memorije i semafora 
+
 
 Princip rada:
 
