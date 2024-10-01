@@ -63,5 +63,7 @@ int main(int argc, char *argv[]) {
     sem_post(sem_prod);
     fclose(pipeStream);
     wait(&status);
+    if (!status) printf("File recieved.\n");
+    else printf("An error has occurred.\n");
     return 0;
  }
