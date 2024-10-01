@@ -19,7 +19,6 @@ int main(int argc, char *argv[]){
 		printf("Error! Unable to get shm block!");
 		return -1;
 	}
-	
 
 	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, O_CREAT, 0660, 0);
 	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, O_CREAT, 0660, 1);

@@ -24,8 +24,8 @@ int main(int argc, char *argv[]) {
 
     if (strcmp(argv[1], "-s") == 0) {
         sem_wait(sem_cons);
-            sem_wait(sem_shut);
-            printf("Shutting down daemon...\n");
+        sem_wait(sem_shut);
+        printf("Shutting down daemon...\n");
         sem_post(sem_prod);
         return 0;
     }
@@ -36,17 +36,27 @@ int main(int argc, char *argv[]) {
 
     pid_t cpid = fork();
     if (cpid==0) {
-        char cmd[356];
-        strcpy(cmd,"./client ");
+        char *args[]={"./client",NULL,NULL};
+        
         char tmpstr[10];
         sprintf(tmpstr,"%d",TempMsg.pid);
-        strcat(cmd,tmpstr);
-        //printf("%s\n", cmd);
-        system(cmd);
+        args[1] = tmpstr;
+
+        char* tmpstr2 = strtok(argv[1],"/");
+        char* filename; 
+        while (1) {
+            if ( tmpstr2 != NULL)
+                filename = tmpstr2;
+            else break;
+            tmpstr2 = strtok(NULL, "/");
+        }
+        args[2] = filename;
+
+        execv(args[0], args);
         exit(0);
     }
-    int status;
 
+    int status;
     
     sem_wait(sem_cons);
     fwrite(&TempMsg,sizeof(CMS),1,pipeStream);

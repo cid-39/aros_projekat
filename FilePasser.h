@@ -44,7 +44,6 @@ char * attach_memory_block(char *filename, int size){
 		return NULL;
 	}
 	return result;
-
 }
 
 bool detach_memory_block(char *block){
@@ -52,7 +51,6 @@ bool detach_memory_block(char *block){
 }
 
 bool destroy_memory_block(char *filename){
-
 	int shared_block_id = get_shared_block(filename, 0);
 	if(shared_block_id == IPC_RESULT_ERROR){
 		return NULL;

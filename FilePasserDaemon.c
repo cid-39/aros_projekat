@@ -41,15 +41,19 @@ int main(int argc, char *argv[]) {
             if ( fread(&TempMsg,sizeof(CMS),1,pipeStream) == 1 ) { 
                 printf("%d --- %s\n", TempMsg.pid, TempMsg.dir);
                 fflush(stdout);
-                    char cmd[600];
-                    strcpy(cmd, "./server ");
+                
+                pid_t cpid = fork();
+                if (cpid==0) {    
+                    char *args[]={"./server",NULL,NULL};
+
                     char tmpstr[10];
                     sprintf(tmpstr,"%d",TempMsg.pid);
-                    strcat(cmd,tmpstr);
-                    strcat(cmd," ");
-                    strcat(cmd,TempMsg.dir);
-                    //printf("%s\n", cmd);
-                    system(cmd);
+                    args[1] = tmpstr;
+
+                    args[2] = TempMsg.dir;
+                    
+                    execv(args[0], args);
+                }
             } else { printf("Error reading the structure\n");}
         sem_post(sem_cons);
         
@@ -60,19 +64,6 @@ int main(int argc, char *argv[]) {
         printf("Closed pipe successfully!\n");
     else
         printf("Unable to delete the pipe, existing anyways...\n");
-    
-    /* {
-         char cmd[400];
-         strcpy(cmd, "./server ");
-         char tmpstr[10];
-         sprintf(tmpstr,"%d",TempMsg.pid);
-         strcat(cmd,tmpstr);
-         strcat(cmd," ");
-         strcat(cmd,TempMsg.dir);
-         printf("%s", cmd);
-         system(cmd);
-     }
-    */
     
     return 0;
 }

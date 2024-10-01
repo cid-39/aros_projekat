@@ -19,14 +19,11 @@ int main(int argc, char *argv[]){
 		printf("Error! Unable to get shm block!");
 		return -1;
 	}
-
-	//sem_unlink(SEM_CONSUMER_NAME);
-	//sem_unlink(SEM_PRODUCER_NAME);
 	
 	sem_t *sem_prod = sem_open(SEM_PRODUCER_NAME, O_CREAT, 0660, 0);
 	sem_t *sem_cons = sem_open(SEM_CONSUMER_NAME, O_CREAT, 0660, 1);
 	
-    FILE *file_ptr = fopen("Kopija", "wb");
+    FILE *file_ptr = fopen(strcat(argv[2],"_NEW"), "wb"); // remove strcat() when paths work nicely (if it happens)
     unsigned char bytes[BLOCK_SIZE];
     long int blocks_num;
 	int size_of_remainder;
