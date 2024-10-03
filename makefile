@@ -1,8 +1,13 @@
-client: Client.c
+all: client server daemon passer
+ 
+client: FilePasser.h Client.c
 	gcc Client.c -o client
-server: Server.c
+
+server: FilePasser.h Server.c
 	gcc Server.c -o server
-daemon:
+
+daemon: FilePasser.h FilePasserDaemon.c
 	gcc FilePasserDaemon.c -o daemon
-passer:
+
+passer: FilePasser.h FilePasser.c
 	gcc FilePasser.c -o passer
